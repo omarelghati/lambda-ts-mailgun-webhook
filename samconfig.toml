@@ -1,0 +1,12 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "sns-test2"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-kqvew10dgd6l"
+s3_prefix = "sns-test2"
+region = "eu-west-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+image_repositories = []
+disable_rollback = true

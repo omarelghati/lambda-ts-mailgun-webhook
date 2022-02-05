@@ -1,0 +1,47 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  mailgun-test
+
+  Sample SAM Template for mailgun-test
+  
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 20
+
+Resources:
+  WebhookDumpBucket:
+    Type: AWS::S3::Bucket
+  MailtestFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambda/built
+      Handler: App.lambdaHandler
+      Runtime: nodejs14.x
+      Policies:
+      - AmazonS3FullAccess
+      - AmazonSNSFullAccess
+      Environment: 
+        Variables:
+          signingKey: fd68caa0349b01a707b06212abba2136-6b60e603-fe7976f9
+          dumpbucket: !Ref WebhookDumpBucket
+      Architectures:
+        - x86_64
+      Events:
+        Mailtest:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /notify
+            Method: any
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  MailtestApi:
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/notify"
+  MailtestFunction:
+    Value: !GetAtt MailtestFunction.Arn
+  MailtestFunctionIamRole:
+    Value: !GetAtt MailtestFunctionRole.Arn
+
